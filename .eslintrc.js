@@ -486,6 +486,12 @@ module.exports = {
       },
     },
     {
+      files: ['packages/@uppy/*/src/**/*.ts', 'packages/@uppy/*/src/**/*.tsx'],
+      'rules': {
+        '@typescript-eslint/explicit-function-return-type': 'error',
+      },
+    },
+    {
       files: [
         './packages/@uppy/companion/**/*.ts',
       ],
