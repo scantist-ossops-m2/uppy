@@ -166,3 +166,13 @@ const rfc2047Encode = (dataIn: string) => {
 export const rfc2047EncodeMetadata = (metadata: Record<string, string>) => (
   Object.fromEntries(Object.entries(metadata).map((entry) => entry.map(rfc2047Encode)))
 )
+
+module.exports.getBucket = (bucketOrFn, req) => {
+  const bucket = typeof bucketOrFn === 'function' ? bucketOrFn(req) : bucketOrFn
+
+  if (typeof bucket !== 'string' || bucket === '') {
+    // This means a misconfiguration or bug
+    throw new TypeError('s3: bucket key must be a string or a function resolving the bucket string')
+  }
+  return bucket
+}

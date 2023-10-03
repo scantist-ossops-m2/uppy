@@ -5,10 +5,7 @@
     "target": "ESnext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "lib": [
-        "dom",
-        "ESnext"
-    ],
+    "lib": ["dom", "ESnext"],
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "allowJs": false,
@@ -19,11 +16,10 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": false,
+    "allowSyntheticDefaultImports": true,
     "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true
-  },
+  }
 }
