@@ -14,7 +14,7 @@ const { version } = require('../../package.json') as { version: string }
  * Tries to read the secret from a file if the according environment variable is set.
  * Otherwise it falls back to the standard secret environment variable.
  */
-const getSecret = (baseEnvVar: string) => {
+const getSecret = (baseEnvVar: string): string => {
   const secretFile = process.env[`${baseEnvVar}_FILE`]
   return secretFile
     ? fs.readFileSync(secretFile, 'utf-8')
@@ -24,22 +24,25 @@ const getSecret = (baseEnvVar: string) => {
 /**
  * Auto-generates server secret
  */
-export const generateSecret = () => {
-  logger.warn('auto-generating server secret because none was specified', 'startup.secret')
+export const generateSecret = (): string => {
+  logger.warn(
+    'auto-generating server secret because none was specified',
+    'startup.secret',
+  )
   return crypto.randomBytes(64).toString('hex')
 }
 
-const hasProtocol = (url: string) => {
+const hasProtocol = (url: string): boolean => {
   return url.startsWith('https://') || url.startsWith('http://')
 }
 
 const companionProtocol = process.env.COMPANION_PROTOCOL || 'http'
 
-function getCorsOrigins () {
+function getCorsOrigins(): RegExp | string[] | undefined {
   if (process.env.COMPANION_CLIENT_ORIGINS) {
-    return process.env.COMPANION_CLIENT_ORIGINS
-      .split(',')
-      .map((url) => (hasProtocol(url) ? url : `${companionProtocol}://${url}`))
+    return process.env.COMPANION_CLIENT_ORIGINS.split(',').map((url) =>
+      hasProtocol(url) ? url : `${companionProtocol}://${url}`,
+    )
   }
   if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
     return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
@@ -52,14 +55,18 @@ const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
 /**
  * Default getKey for Companion standalone variant
  */
-const defaultStandaloneGetKey = (...args: Parameters<typeof utils.defaultGetKey>) => `${s3Prefix}${utils.defaultGetKey(...args)}`
+const defaultStandaloneGetKey = (
+  ...args: Parameters<typeof utils.defaultGetKey>
+): string => `${s3Prefix}${utils.defaultGetKey(...args)}`
 
 /**
  * Loads the config from environment variables
  */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getConfigFromEnv = () => {
   const uploadUrls = process.env.COMPANION_UPLOAD_URLS
-  const domains = process.env.COMPANION_DOMAINS || process.env.COMPANION_DOMAIN || null
+  const domains =
+    process.env.COMPANION_DOMAINS || process.env.COMPANION_DOMAIN || null
   const validHosts = domains ? domains.split(',') : []
 
   return {
@@ -113,7 +120,7 @@ const getConfigFromEnv = () => {
       endpoint: process.env.COMPANION_AWS_ENDPOINT,
       region: process.env.COMPANION_AWS_REGION,
       useAccelerateEndpoint:
-      process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
+        process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
       expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '800', 10),
       acl: process.env.COMPANION_AWS_ACL,
     },
@@ -126,19 +133,27 @@ const getConfigFromEnv = () => {
       validHosts,
     },
     // todo next major make this default false
-    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT == null || process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
-    periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
+    enableUrlEndpoint:
+      process.env.COMPANION_ENABLE_URL_ENDPOINT == null ||
+      process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
+    periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS
+      ? process.env.COMPANION_PERIODIC_PING_URLS.split(',')
+      : [],
     periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
-      ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,
-    periodicPingStaticPayload: process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD
-      ? JSON.parse(process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD) : undefined,
+      ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10)
+      : undefined,
+    periodicPingStaticPayload: process.env
+      .COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD
+      ? JSON.parse(process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD)
+      : undefined,
     periodicPingCount: process.env.COMPANION_PERIODIC_PING_COUNT
-      ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10) : undefined,
+      ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10)
+      : undefined,
     filePath: process.env.COMPANION_DATADIR,
     redisUrl: process.env.COMPANION_REDIS_URL,
     redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
     //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
-    redisOptions: (() => {
+    redisOptions: ((): Record<string, unknown> | undefined => {
       try {
         if (!process.env.COMPANION_REDIS_OPTIONS) {
           return undefined
@@ -157,26 +172,35 @@ const getConfigFromEnv = () => {
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
     streamingUpload: process.env.COMPANION_STREAMING_UPLOAD === 'true',
-    maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
-    chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
-    clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
-      ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,
+    maxFileSize: process.env.COMPANION_MAX_FILE_SIZE
+      ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10)
+      : undefined,
+    chunkSize: process.env.COMPANION_CHUNK_SIZE
+      ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10)
+      : undefined,
+    clientSocketConnectTimeout: process.env
+      .COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
+      ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10)
+      : undefined,
     metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
     loggerProcessName: process.env.COMPANION_LOGGER_PROCESS_NAME,
     corsOrigins: getCorsOrigins(),
-    testDynamicOauthCredentials: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
-    testDynamicOauthCredentialsSecret: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
+    testDynamicOauthCredentials:
+      process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
+    testDynamicOauthCredentialsSecret:
+      process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
   }
 }
 
 /**
  * Returns the config path specified via cli arguments
  */
-const getConfigPath = () => {
+const getConfigPath = (): string => {
   let configPath: string
 
   for (let i = process.argv.length - 1; i >= 0; i--) {
-    const isConfigFlag = process.argv[i] === '-c' || process.argv[i] === '--config'
+    const isConfigFlag =
+      process.argv[i] === '-c' || process.argv[i] === '--config'
     const flagHasValue = i + 1 <= process.argv.length
     if (isConfigFlag && flagHasValue) {
       configPath = process.argv[i + 1]
@@ -190,7 +214,7 @@ const getConfigPath = () => {
 /**
  * Loads the config from a file and returns it as an object
  */
-const getConfigFromFile = () => {
+const getConfigFromFile = (): Record<string, unknown> => {
   const path = getConfigPath()
   if (!path) return {}
 
@@ -202,11 +226,13 @@ const getConfigFromFile = () => {
  * Reads all companion configuration set via environment variables
  * and via the config file path
  */
-export const getCompanionOptions = (options = {}) => {
+export const getCompanionOptions = (options = {}): Record<string, unknown> => {
   return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
-export const buildHelpfulStartupMessage = (companionOptions: Record<string, unknown>) => {
+export const buildHelpfulStartupMessage = (
+  companionOptions: Record<string, unknown>,
+): string => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
   Object.keys(companionOptions.providerOptions).forEach((providerName) => {
@@ -226,7 +252,10 @@ export const buildHelpfulStartupMessage = (companionOptions: Record<string, unkn
 
     - Be sure to add the following URLs as your Oauth redirect uris on their corresponding developer interfaces:
         ${callbackURLs.join(', ')}
-    - The URL ${buildURL('/metrics', true)} is available for  statistics to keep Companion running smoothly
+    - The URL ${buildURL(
+      '/metrics',
+      true,
+    )} is available for  statistics to keep Companion running smoothly
     - https://github.com/transloadit/uppy/issues - report your bugs here
 
     So quit lollygagging, start uploading and experience the future!
