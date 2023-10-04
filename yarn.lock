@@ -7717,6 +7717,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@transloadit/ts-fly@npm:^0.1.4":
+  version: 0.1.4
+  resolution: "@transloadit/ts-fly@npm:0.1.4"
+  dependencies:
+    pirates: ^4.0.5
+    sucrase: ^3.32.0
+  bin:
+    ts-fly: ./bin/ts-fly
+  checksum: 5b612be72276f5b9811aa561b9ef8b6b97ae8594e4070d2cab23828d2a56f5a77ece22a4be15aec36303f4b2d2561018412bd9254a8368d5bd9c71b3d6d1a33a
+  languageName: node
+  linkType: hard
+
 "@trysound/sax@npm:0.2.0":
   version: 0.2.0
   resolution: "@trysound/sax@npm:0.2.0"
@@ -14497,6 +14509,7 @@ __metadata:
   resolution: "e2e@workspace:e2e"
   dependencies:
     "@parcel/transformer-vue": 2.9.3
+    "@transloadit/ts-fly": ^0.1.4
     "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
     "@uppy/aws-s3-multipart": "workspace:^"
@@ -29776,6 +29789,24 @@ __metadata:
     sucrase: bin/sucrase
     sucrase-node: bin/sucrase-node
   checksum: 4a20a4a821f46e1010da22417e6edafe637bac9a5414e71fc626a569fd3d266a1fcf010073c7627c296223e41fc871fb30678b6238fb95873e49be7973b8743b
+  languageName: node
+  linkType: hard
+
+"sucrase@npm:^3.32.0":
+  version: 3.34.0
+  resolution: "sucrase@npm:3.34.0"
+  dependencies:
+    "@jridgewell/gen-mapping": ^0.3.2
+    commander: ^4.0.0
+    glob: 7.1.6
+    lines-and-columns: ^1.1.6
+    mz: ^2.7.0
+    pirates: ^4.0.1
+    ts-interface-checker: ^0.1.9
+  bin:
+    sucrase: bin/sucrase
+    sucrase-node: bin/sucrase-node
+  checksum: 61860063bdf6103413698e13247a3074d25843e91170825a9752e4af7668ffadd331b6e99e92fc32ee5b3c484ee134936f926fa9039d5711fafff29d017a2110
   languageName: node
   linkType: hard
 
